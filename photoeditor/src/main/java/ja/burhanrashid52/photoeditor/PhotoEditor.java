@@ -2,9 +2,11 @@ package ja.burhanrashid52.photoeditor;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Insets;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import androidx.annotation.ColorInt;
@@ -13,12 +15,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresPermission;
 import androidx.annotation.UiThread;
+
+import android.os.Build;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
+import android.view.WindowMetrics;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -71,6 +78,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         redoViews = new ArrayList<>();
     }
 
+
     /**
      * This will add image on {@link PhotoEditorView} which you drag,rotate and scale using pinch
      * if {@link PhotoEditor.Builder#setPinchTextScalable(boolean)} enabled
@@ -82,6 +90,14 @@ public class PhotoEditor implements BrushViewChangeListener {
         final ImageView imageView = imageRootView.findViewById(R.id.imgPhotoEditorImage);
         final FrameLayout frmBorder = imageRootView.findViewById(R.id.frmBorder);
         final ImageView imgClose = imageRootView.findViewById(R.id.imgPhotoEditorClose);
+
+        int width = parentView.getWidth();
+        int imageSize = 70 * width / 100;
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(new FrameLayout.LayoutParams(imageSize, imageSize));
+            frmBorder.setLayoutParams(lp);
+        }
 
         imageView.setImageBitmap(desiredImage);
 
@@ -104,6 +120,14 @@ public class PhotoEditor implements BrushViewChangeListener {
         imageRootView.setOnTouchListener(multiTouchListener);
 
         addViewToParent(imageRootView, ViewType.IMAGE);
+
+    }
+
+    public void addForeGround(Bitmap desiredImage) {
+        final View imageRootView = getLayout(ViewType.IMAGE_FOREGROUND);
+        final ImageView imageView = imageRootView.findViewById(R.id.imgForeGround);
+        imageView.setImageBitmap(desiredImage);
+        addViewToParent(imageRootView, ViewType.IMAGE_FOREGROUND);
 
     }
 
@@ -334,6 +358,9 @@ public class PhotoEditor implements BrushViewChangeListener {
                 break;
             case IMAGE:
                 rootView = mLayoutInflater.inflate(R.layout.view_photo_editor_image, null);
+                break;
+            case IMAGE_FOREGROUND:
+                rootView = mLayoutInflater.inflate(R.layout.view_photo_editor_image_foreground, null);
                 break;
             case EMOJI:
                 rootView = mLayoutInflater.inflate(R.layout.view_photo_editor_text, null);
