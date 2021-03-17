@@ -1,15 +1,20 @@
 package studio.vim.phocart
 
 import android.Manifest
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.view.animation.TranslateAnimation
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -27,6 +32,11 @@ import studio.vim.phocart.utils.ImageUtils
 import studio.vim.phocart.utils.Resource
 import studio.vim.phocart.viewmodel.GalleryViewModel
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class HomeActivity : AppCompatActivity(), ListPhotoAdapter.AdapterListener {
@@ -41,10 +51,15 @@ class HomeActivity : AppCompatActivity(), ListPhotoAdapter.AdapterListener {
         ArrayList<PhotoModel>(galleryViewModel.getGallerySize(this))
     }
 
+    private val CAMERA_REQUEST = 52
+    private val PICK_REQUEST = 53
+
     var mCountDownTimer: CountDownTimer? = null
     var i = 20
     val timeout : Long = 60000
     val tick : Long = 500
+    var isCamera = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +68,76 @@ class HomeActivity : AppCompatActivity(), ListPhotoAdapter.AdapterListener {
         requestWriteStoragePermission()
         initApiRequest()
         initProgressProcessing()
+
+        btnCamera.setOnClickListener {
+            isCamera = true
+            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            intent.putExtra("val",CAMERA_REQUEST)
+            resultLauncher.launch(cameraIntent)
+        }
+
+        btnGallery.setOnClickListener {
+            isCamera = false
+            val intent = Intent()
+            intent.type = "image/*"
+            intent.action = Intent.ACTION_GET_CONTENT
+            intent.putExtra("val",PICK_REQUEST)
+            resultLauncher.launch(intent)
+        }
+    }
+
+    var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data: Intent? = result.data
+            data?.let {
+                if(isCamera){
+                    val photo = data.extras!!["data"] as Bitmap?
+                }else {
+                    try {
+                        val uri = data.data
+                        uri?.path?.let { it1 -> selectPhoto(it1 + ".jpg") }
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+
+        }
+    }
+
+
+
+    private fun bitmapToUri (bitmap : Bitmap){
+        var uri : Uri? = null
+        val file = createImageFile(context)
+        if (file != null) {
+            try {
+                val fout = FileOutputStream(file)
+                bitmap.compress(Bitmap.CompressFormat.PNG, 70, fout)
+                fout.flush()
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+            }
+            uri= Uri.fromFile(file)
+        }
+        return uri
+    }
+
+    private fun createImageFile(): File? {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+        val imageFileName = "JPEG_" + timeStamp + "_"
+        var mFileTemp: File? = null
+        val root: String = getDir("my_sub_dir", Context.MODE_PRIVATE).absolutePath
+        val myDir = File("$root/Img")
+        if (!myDir.exists()) {
+            myDir.mkdirs()
+        }
+        try {
+            mFileTemp = File.createTempFile(imageFileName, ".jpg", myDir.absoluteFile)
+        } catch (e1: IOException) {
+            e1.printStackTrace()
+        }
+        return mFileTemp
     }
 
     private fun initProgressProcessing(){
@@ -108,7 +193,7 @@ class HomeActivity : AppCompatActivity(), ListPhotoAdapter.AdapterListener {
 
     private fun init() {
         val layoutManager = GridLayoutManager(this, 3)
-        val pageSize = 20
+        val pageSize = 50
         rvPhoto.layoutManager = layoutManager
         rvPhoto.addItemDecoration(SpaceItemDecoration(8))
         rvPhoto.adapter = adapter
@@ -122,7 +207,7 @@ class HomeActivity : AppCompatActivity(), ListPhotoAdapter.AdapterListener {
                     response.data?.let {
                         (mCountDownTimer as CountDownTimer).onFinish()
                         (mCountDownTimer as CountDownTimer).cancel()
-                        var intent = Intent(this,EditPhotoActivity::class.java)
+                        var intent = Intent(this,EditPhotoActivity2::class.java)
                         intent.putExtra("cartoon",it.path)
                         startActivity(intent)
                     }
@@ -148,8 +233,12 @@ class HomeActivity : AppCompatActivity(), ListPhotoAdapter.AdapterListener {
     }
 
     override fun onPhotoSelected(photoModel: PhotoModel) {
+        selectPhoto(photoModel.uri)
+    }
+
+    private fun selectPhoto(url : String){
         try{
-            val imagePath = ImageUtils(this).compressImage(photoModel.uri)
+            val imagePath = ImageUtils(this).compressImage(url)
             val file = File(imagePath)
             val requestFile = file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
             val body = MultipartBody.Part.createFormData("file",file.name,requestFile)
@@ -159,7 +248,6 @@ class HomeActivity : AppCompatActivity(), ListPhotoAdapter.AdapterListener {
         }catch (e : Exception){
             e.message?.let { Log.e("ERRCONV", it) }
         }
-
     }
 
     override fun onRequestPermissionsResult(

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#171515"
-    tools:context=".EditPhotoActivity">
+    tools:context=".EditPhotoActivity2">
 
     <LinearLayout
         android:id="@+id/ltrToolbar"

@@ -123,12 +123,19 @@ public class PhotoEditor implements BrushViewChangeListener {
 
     }
 
+    public void removeForeground(){
+
+    }
+
     public void addForeGround(Bitmap desiredImage) {
         final View imageRootView = getLayout(ViewType.IMAGE_FOREGROUND);
         final ImageView imageView = imageRootView.findViewById(R.id.imgForeGround);
+        final FrameLayout parent = imageRootView.findViewById(R.id.parentView);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            parent.setTranslationZ(200);
+        }
         imageView.setImageBitmap(desiredImage);
         addViewToParent(imageRootView, ViewType.IMAGE_FOREGROUND);
-
     }
 
     /**
@@ -311,7 +318,8 @@ public class PhotoEditor implements BrushViewChangeListener {
     private void addViewToParent(View rootView, ViewType viewType) {
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+        params.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
         parentView.addView(rootView, params);
         addedViews.add(rootView);
         if (mOnPhotoEditorListener != null)
@@ -572,6 +580,14 @@ public class PhotoEditor implements BrushViewChangeListener {
     private void clearBrushAllViews() {
         if (brushDrawingView != null)
             brushDrawingView.clearAll();
+    }
+
+    public void clearForeGround(){
+        for (int i = 0; i < addedViews.size(); i++) {
+            if(addedViews.get(i).getId() == R.id.parentView){
+                parentView.removeView(addedViews.get(i));
+            }
+        }
     }
 
     /**

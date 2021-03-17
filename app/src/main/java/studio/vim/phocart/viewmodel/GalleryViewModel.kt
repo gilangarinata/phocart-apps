@@ -43,8 +43,13 @@ class GalleryViewModel : ViewModel() {
 
     fun processData(file : MultipartBody.Part) = viewModelScope.launch {
         homeData.postValue(Resource.Loading())
-        val response = homeRepository.getHomeData(file)
-        homeData.postValue(handleHomeDataResponse(response))
+        try {
+            val response = homeRepository.getHomeData(file)
+            homeData.postValue(handleHomeDataResponse(response))
+        }catch (e : Exception){
+            homeData.postValue(Resource.Error(560,e.message!!,null))
+        }
+
     }
 
     private fun handleHomeDataResponse(response: Response<ApiResponse>): Resource<ApiResponse> {
