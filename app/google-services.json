@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "133076472472",
+    "project_id": "phocart-app",
+    "storage_bucket": "phocart-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:133076472472:android:59aa7a4134e291c37db6ed",
+        "android_client_info": {
+          "package_name": "studio.vim.phocart"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "133076472472-lv77cuj6jnih9r5rdi0dqk5tn3bimtfm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHz-V85CExtzwiqTpBzd5iuEQoiAcLfyE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "133076472472-lv77cuj6jnih9r5rdi0dqk5tn3bimtfm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

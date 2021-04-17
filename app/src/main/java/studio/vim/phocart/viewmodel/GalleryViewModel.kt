@@ -41,13 +41,13 @@ class GalleryViewModel : ViewModel() {
         )
     }
 
-    fun processData(file : MultipartBody.Part) = viewModelScope.launch {
+    fun processData(file: MultipartBody.Part, isUsingBackground: Boolean) = viewModelScope.launch {
         homeData.postValue(Resource.Loading())
         try {
-            val response = homeRepository.getHomeData(file)
+            val response = if (isUsingBackground) homeRepository.getHomeData(file) else homeRepository.getHomeDataNoBackground(file)
             homeData.postValue(handleHomeDataResponse(response))
-        }catch (e : Exception){
-            homeData.postValue(Resource.Error(560,e.message!!,null))
+        } catch (e: Exception) {
+            homeData.postValue(Resource.Error(560, e.message!!, null))
         }
 
     }

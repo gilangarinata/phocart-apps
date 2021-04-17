@@ -38,7 +38,7 @@ class BackgroundAdapter(val listener : AdapterListener, private val context : Co
         internal fun bind(position: Int) {
             items[position]?.let { it.display?.let { it1 -> ivColor.setImageResource(it1) } }
             itemView.setOnClickListener {
-                items[position]?.let { it1 -> listener.onBackgroundSelected(it1) }
+                items[position]?.let { it1 -> listener.onBackgroundSelected(it1, position) }
                 resetSelected(position)
             }
 
@@ -65,6 +65,6 @@ class BackgroundAdapter(val listener : AdapterListener, private val context : Co
     }
 
     interface AdapterListener{
-        fun onBackgroundSelected(background: BackgroundModel)
+        fun onBackgroundSelected(background: BackgroundModel, pos: Int)
     }
 }

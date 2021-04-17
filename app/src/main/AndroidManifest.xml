@@ -15,15 +15,32 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Phocart"
         android:usesCleartextTraffic="true">
+        <activity android:name=".SettingActivity"></activity>
+        <activity android:name=".ProActivity" />
+        <activity android:name=".HomeActivity" />
         <activity android:name=".EditPhotoActivity2" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".HomeActivity">
+        <activity android:name=".SplashScreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-5314437672129370~1362215144" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provier_paths" />
+        </provider>
     </application>
 
 </manifest>

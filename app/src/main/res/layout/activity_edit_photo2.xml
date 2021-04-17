@@ -7,6 +7,15 @@
     android:background="#171515"
     tools:context=".EditPhotoActivity2">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit"
+        app:layout_constraintBottom_toBottomOf="@+id/ltrToolbar"
+        app:layout_constraintEnd_toEndOf="@+id/ltrToolbar"
+        app:layout_constraintStart_toStartOf="@+id/ltrToolbar"
+        app:layout_constraintTop_toTopOf="@+id/ltrToolbar" />
+
     <LinearLayout
         android:id="@+id/ltrToolbar"
         android:layout_width="match_parent"
@@ -17,6 +26,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
+            android:id="@+id/ivBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_baseline_arrow_back_24" />
@@ -26,24 +36,53 @@
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Edit" />
 
         <View
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
-        <Button
-            android:layout_width="60dp"
-            android:layout_height="30dp"
+        <ImageButton
+            android:id="@+id/btnShare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:background="#00FFFFFF"
+            app:srcCompat="@drawable/ic_baseline_share_24" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSave"
+            android:layout_width="70dp"
+            android:layout_height="35dp"
             android:background="@drawable/btn_pro_24"
             android:padding="0dp"
             android:textAllCaps="false"
-            android:text="Apply" />
+            android:text="Save" />
 
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/containerAds"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/ltrToolbar">
+
+
+        <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/adViewTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            ads:adSize="BANNER"
+            ads:adUnitId="ca-app-pub-5314437672129370/7708131648"
+            ads:layout_constraintBottom_toTopOf="@+id/lytBottom"
+            ads:layout_constraintEnd_toEndOf="parent"
+            ads:layout_constraintStart_toStartOf="parent"></com.google.android.gms.ads.AdView>
 
     </LinearLayout>
 
@@ -52,11 +91,28 @@
         android:id="@+id/photoEditorView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/ltrToolbar"
+        app:layout_constraintBottom_toTopOf="@id/lytOtherTools"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/lytTools"
+        app:layout_constraintTop_toBottomOf="@+id/containerAds"
         app:layout_constraintDimensionRatio="1:1" />
+
+    <LinearLayout
+        android:id="@+id/lytOtherTools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/lytTools">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvOtherTools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
+            app:layout_constraintBottom_toTopOf="@+id/vLines" />
+
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/lytTools"
